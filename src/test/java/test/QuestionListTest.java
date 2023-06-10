@@ -1,11 +1,14 @@
 package test;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import pages.ScooterHomePage;
+
 import static org.junit.Assert.assertEquals;
 
 
@@ -14,14 +17,18 @@ public class QuestionListTest {
     private final String question;
     private final String answer;
     private final String answerExpect;
-    public QuestionListTest(String question, String answer, String answerExpect){
+    public WebDriver driver;
+    ScooterHomePage scooterHomePage;
+
+    public QuestionListTest(String question, String answer, String answerExpect) {
         this.question = question;
         this.answer = answer;
         this.answerExpect = answerExpect;
     }
+
     //Параметры (номера вопросов, ответов и ожидаемые тексты ответов)
     @Parameterized.Parameters
-    public static Object[][] getQuestion(){
+    public static Object[][] getQuestion() {
         return new Object[][]{
                 {"0", "0", "Сутки — 400 рублей. Оплата курьеру — наличными или картой."},
                 {"1", "1", "Пока что у нас так: один заказ — один самокат. Если хотите покататься с друзьями, можете просто сделать несколько заказов — один за другим."},
@@ -34,14 +41,22 @@ public class QuestionListTest {
         };
     }
 
-    @Test
-    public void clickQuestionAndCheckAnswer(){
-        WebDriver driver = new ChromeDriver();
-        ScooterHomePage scooterHomePage = new ScooterHomePage(driver);
+    @Before
+    public void setUp() {
+        driver = new ChromeDriver();
+        scooterHomePage = new ScooterHomePage(driver);
         scooterHomePage.openURL(); //Переходим на страницу сервиса заказа самоката
+    }
+
+    @After
+    public void tearDown() {
+        driver.quit(); //Закрываем браузер
+    }
+
+    @Test
+    public void clickQuestionAndCheckAnswer() {
         scooterHomePage.clickQuestion(question); //Кликаем по вопросу с соответствующим номером
         String result = scooterHomePage.waitForAnswerAndCheckText(answer); //Получаем текст ответа, кладем его в переменную
         assertEquals("ТЕКСТ ВОПРОСА НЕКОРРЕКТНЫЙ!", answerExpect, result); //Проверка корректности текста ответа
-        driver.close(); //Закрываем браузер (driver.quit() почему-то не работает :( )
     }
 }
