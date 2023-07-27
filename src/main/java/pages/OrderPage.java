@@ -99,6 +99,10 @@ public class OrderPage {
         driver.findElement(nextButton).click();
     }
 
+    /**
+     * Метод ввода Данных о заказе
+     */
+
     public void setRentData(String desiredDate, String Period, String colour, String comment) {
         driver.findElement(dateInput).sendKeys(desiredDate);
         driver.findElement(dateInput).click();
